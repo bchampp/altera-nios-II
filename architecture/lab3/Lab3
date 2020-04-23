@@ -1,0 +1,80 @@
+main::				// 'n' number is a global variable; the program must write to it 
+
+	PrintString("ELEC 274 Lab 3\n")
+	PrintString("Type two decimal digits: ")
+	number = GetDecimal99()
+	PrintChar('\n')
+	PrintString("You typed: ")
+	PrintDecimal99(number)
+	PrintChar('\n')
+	
+	
+	
+PrintString:			# same as lab 2
+    subi sp, sp, 12
+    stw ra, 8(sp)
+    stw r3, 4(sp)
+    stw r2, 0(sp)
+    mov r3, r2
+ps_loop:
+    ldb r2, 0(r3)
+    beq r2, r0, end_ps_loop
+    call PrintChar
+    addi r3, r3, 1
+    br ps_loop
+end_ps_loop:
+    ldw ra, 8(sp)
+    ldw r3, 4(sp)
+    ldw r2, 0(sp)
+    addi sp, sp, 12
+    ret
+	
+PrintChar:				# same as lab 2
+    subi sp, sp, 8
+    stw r3, 4(sp)
+    stw r4, 0(sp)
+    movia r3, JTAG_UART_BASE
+pc_loop:
+    ldwio r4, STATUS_OFFSET(r3)
+    andhi r4, r4, WSPACE_MASK
+    beq r4, r0, pc_loop
+    stwio r2, DATA_OFFSET(r3)
+    ldw r3, 4(sp)
+    ldw r4, 0(sp)
+    addi sp, sp, 8
+    ret
+	
+// Pseudo Code has to be done still
+
+GetChar()::			//new subroutine to support keyboard input
+do
+	date = read JTAG UART data register //data is used again later
+	st = data AND 0x8000 //result of masking in 'st'
+	while (st is zero)
+	return (data AND 0xFF)	// NOTE: 'data' is used; do not reread I/O reg
+	
+	
+	
+GetDecimal99()::
+	result = 0
+	do
+		ch = GetChar()
+	while (ch < '0' or ch > '9')
+	PrintChar(ch)
+	result = ch - '0'
+	result = result*10
+	do	
+		ch = GetChar()
+	while (ch < '0' or ch > '9')
+	PrintChar(ch)
+	result = result + (ch - '0')
+	return result
+	
+PrintDecimal99(n)::
+	q = n/10		// tens digit is given by quotient
+	r = n - (q*10)	// ones digit is given by remainder
+	PrintChra(q + '0')
+	PrintChar(r + '0')
+		
+	
+		
