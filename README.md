@@ -1,6 +1,6 @@
 # ELEC371
 
-Code from ELEC371 Microprocessors Course
+Code for ELEC371 microprocessors course
 
 ## Authors
 - Brent Champion
